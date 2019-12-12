@@ -3,7 +3,7 @@ package quadtree
 import "quadtree-server/place"
 
 const (
-	MaxTreeDepth = 2
+	MaxTreeDepth = 6
 )
 
 // Quad-tree data structure
@@ -22,4 +22,8 @@ func (quadTree *QuadTree) Root() *TreeNode {
 
 func (quadTree *QuadTree) Insert(p place.Place) {
 	quadTree.root.InsertPlace(p)
+}
+
+func (quadTree QuadTree) RangeSearch(centralLocation *place.GeoLocation, radius float64) []place.Place {
+	return quadTree.Root().RangeSearch(centralLocation, radius)
 }

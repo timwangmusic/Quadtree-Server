@@ -2,15 +2,17 @@ package quadtree
 
 import (
 	"github.com/mmcloughlin/geohash"
+	"math"
 	"quadtree-server/place"
+	"quadtree-server/utils"
 )
 
 const (
-	MaxPlacesPerNode = 3
-	Northwest = "northwest"
-	Northeast = "northeast"
-	Southwest = "southwest"
-	Southeast = "southeast"
+	MaxPlacesPerNode = 100
+	Northwest        = "northwest"
+	Northeast        = "northeast"
+	Southwest        = "southwest"
+	Southeast        = "southeast"
 )
 
 type TreeNode struct {
@@ -19,8 +21,8 @@ type TreeNode struct {
 	Places   []place.Place // empty if not a leaf node
 	Parent   *TreeNode
 	Children map[string]*TreeNode
-	Depth	 uint8
-	isLeaf	 bool
+	Depth    uint8
+	isLeaf   bool
 }
 
 func (treeNode *TreeNode) Init(minLat float64, maxLat float64, minLng float64, maxLng float64, depth uint8, parent *TreeNode) {
@@ -30,6 +32,58 @@ func (treeNode *TreeNode) Init(minLat float64, maxLat float64, minLng float64, m
 	treeNode.Depth = depth
 	treeNode.Parent = parent
 	treeNode.isLeaf = true
+}
+
+// if current subtree is leaf, return all places in the subtree since there is no smaller area to explore
+// if current subtree has children and requested area is smaller than the area covered by subtree, recurse to child subtree
+// if current subtree has children and requested area is larger than or equals the area covered by subtree, depth-first-search
+// to get all places in the subtrees
+func (treeNode TreeNode) RangeSearch(centralLocation *place.GeoLocation, radius float64) (places []place.Place) {
+	if treeNode.isLeaf {
+		places = treeNode.Places
+	} else {
+		requestedArea := math.Pi * radius * radius
+		if requestedArea >= area(treeNode) {
+			places = dfs(treeNode)
+		} else {
+			p := place.Place{Location: *centralLocation}
+			switch {
+			case treeNode.inNorthwest(p):
+				places = treeNode.Children[Northwest].RangeSearch(centralLocation, radius)
+			case treeNode.inNortheast(p):
+				places = treeNode.Children[Northeast].RangeSearch(centralLocation, radius)
+			case treeNode.inSouthwest(p):
+				places = treeNode.Children[Southwest].RangeSearch(centralLocation, radius)
+			case treeNode.inSoutheast(p):
+				places = treeNode.Children[Southeast].RangeSearch(centralLocation, radius)
+			}
+		}
+	}
+	return
+}
+
+func isRoot(treeNode TreeNode) bool {
+	area := treeNode.Area
+	return area.MinLng == -180 && area.MaxLng == 180 && area.MinLat == -90 && area.MaxLat == 90
+}
+
+// area in square km
+func area(treeNode TreeNode) (subtreeArea float64) {
+	if isRoot(treeNode) {
+		return 2.003018497261185e+08 * 4
+	}
+	return utils.Area(*treeNode.Area)
+}
+
+func dfs(treeNode TreeNode) (places []place.Place) {
+	if treeNode.isLeaf {
+		places = treeNode.Places
+	} else {
+		for _, child := range treeNode.Children {
+			places = append(places, dfs(*child)...)
+		}
+	}
+	return
 }
 
 func (treeNode *TreeNode) Size() int {
