@@ -7,10 +7,10 @@ package server
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/weihesdlegend/quadtree-server/place"
+	"github.com/weihesdlegend/quadtree-server/quadtree"
 	"go.uber.org/zap"
 	"net/http"
-	"quadtree-server/place"
-	"quadtree-server/quadtree"
 	"strconv"
 )
 

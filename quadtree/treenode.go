@@ -2,9 +2,9 @@ package quadtree
 
 import (
 	"github.com/mmcloughlin/geohash"
+	"github.com/weihesdlegend/quadtree-server/place"
+	"github.com/weihesdlegend/quadtree-server/utils"
 	"math"
-	"quadtree-server/place"
-	"quadtree-server/utils"
 )
 
 const (

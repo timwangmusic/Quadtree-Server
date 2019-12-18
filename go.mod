@@ -1,4 +1,4 @@
-module quadtree-server
+module github.com/weihesdlegend/quadtree-server
 
 go 1.13
 

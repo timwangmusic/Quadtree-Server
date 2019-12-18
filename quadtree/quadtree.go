@@ -1,6 +1,6 @@
 package quadtree
 
-import "quadtree-server/place"
+import "github.com/weihesdlegend/quadtree-server/place"
 
 const (
 	MaxTreeDepth = 6

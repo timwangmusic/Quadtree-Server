@@ -2,8 +2,8 @@ package test
 
 import (
 	"fmt"
-	"quadtree-server/place"
-	"quadtree-server/quadtree"
+	"github.com/weihesdlegend/quadtree-server/place"
+	"github.com/weihesdlegend/quadtree-server/quadtree"
 	"testing"
 )
 
