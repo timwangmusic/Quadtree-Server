@@ -8,7 +8,6 @@ import (
 )
 
 const (
-	MaxPlacesPerNode = 100
 	Northwest        = "northwest"
 	Northeast        = "northeast"
 	Southwest        = "southwest"
@@ -23,15 +22,17 @@ type TreeNode struct {
 	Children map[string]*TreeNode
 	Depth    uint8
 	isLeaf   bool
+	MaxNumPlaces uint
 }
 
-func (treeNode *TreeNode) Init(minLat float64, maxLat float64, minLng float64, maxLng float64, depth uint8, parent *TreeNode) {
+func (treeNode *TreeNode) Init(minLat float64, maxLat float64, minLng float64, maxLng float64, depth uint8, parent *TreeNode, maxNumPlaces uint) {
 	treeNode.Area = &geohash.Box{MinLat: minLat, MinLng: minLng, MaxLat: maxLat, MaxLng: maxLng}
 	treeNode.Key = geohash.Encode(treeNode.Area.Center())
 	treeNode.Children = make(map[string]*TreeNode)
 	treeNode.Depth = depth
 	treeNode.Parent = parent
 	treeNode.isLeaf = true
+	treeNode.MaxNumPlaces = maxNumPlaces
 }
 
 // if current subtree is leaf, return all places in the subtree since there is no smaller area to explore
@@ -116,7 +117,7 @@ func (treeNode *TreeNode) assignPlaces() {
 func (treeNode *TreeNode) InsertPlace(p place.Place) {
 	if treeNode.IsLeafNode() {
 		treeNode.Places = append(treeNode.Places, p)
-		if treeNode.Size() > MaxPlacesPerNode && treeNode.Depth < MaxTreeDepth {
+		if uint(treeNode.Size()) > treeNode.MaxNumPlaces && treeNode.Depth < MaxTreeDepth {
 			treeNode.Split()
 		}
 	} else {
@@ -139,16 +140,16 @@ func (treeNode *TreeNode) Split() {
 
 	// create children nodes
 	northwest := &TreeNode{}
-	northwest.Init(centerLat, maxLat, minLng, centerLng, treeNode.Depth+1, treeNode)
+	northwest.Init(centerLat, maxLat, minLng, centerLng, treeNode.Depth+1, treeNode, treeNode.MaxNumPlaces)
 
 	southwest := &TreeNode{}
-	southwest.Init(minLat, centerLat, minLng, centerLng, treeNode.Depth+1, treeNode)
+	southwest.Init(minLat, centerLat, minLng, centerLng, treeNode.Depth+1, treeNode, treeNode.MaxNumPlaces)
 
 	northeast := &TreeNode{}
-	northeast.Init(centerLat, maxLat, centerLng, maxLng, treeNode.Depth+1, treeNode)
+	northeast.Init(centerLat, maxLat, centerLng, maxLng, treeNode.Depth+1, treeNode, treeNode.MaxNumPlaces)
 
 	southeast := &TreeNode{}
-	southeast.Init(minLat, centerLat, centerLng, maxLng, treeNode.Depth+1, treeNode)
+	southeast.Init(minLat, centerLat, centerLng, maxLng, treeNode.Depth+1, treeNode, treeNode.MaxNumPlaces)
 
 	// attach children nodes to map
 	treeNode.Children[Northwest] = northwest

@@ -11,9 +11,9 @@ type QuadTree struct {
 	root *TreeNode
 }
 
-func (quadTree *QuadTree) Init() {
+func (quadTree *QuadTree) Init(maxNumPlaces uint) {
 	quadTree.root = &TreeNode{}
-	quadTree.root.Init(-90, 90, -180, 180, 0, nil)
+	quadTree.root.Init(-90, 90, -180, 180, 0, nil, maxNumPlaces)
 }
 
 func (quadTree *QuadTree) Root() *TreeNode {
