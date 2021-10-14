@@ -6,8 +6,8 @@ type GeoLocation struct {
 }
 
 type Place struct {
-	Id       string `json:"id"`
+	Id       string      `json:"id"`
 	Location GeoLocation `json:"location"`
-	Name     string `json:"name"`
-	Type     string `json:"type"`
+	Name     string      `json:"name"`
+	Type     string      `json:"type"`
 }

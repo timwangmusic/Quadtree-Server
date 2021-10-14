@@ -8,20 +8,20 @@ import (
 )
 
 const (
-	Northwest        = "northwest"
-	Northeast        = "northeast"
-	Southwest        = "southwest"
-	Southeast        = "southeast"
+	Northwest = "northwest"
+	Northeast = "northeast"
+	Southwest = "southwest"
+	Southeast = "southeast"
 )
 
 type TreeNode struct {
-	Key      string // geohash of the box area defined by the node
-	Area     *geohash.Box
-	Places   []place.Place // empty if not a leaf node
-	Parent   *TreeNode
-	Children map[string]*TreeNode
-	Depth    uint8
-	isLeaf   bool
+	Key          string // geo-hash of the box area defined by the node
+	Area         *geohash.Box
+	Places       []place.Place // empty if not a leaf node
+	Parent       *TreeNode
+	Children     map[string]*TreeNode
+	Depth        uint8
+	isLeaf       bool
 	MaxNumPlaces uint
 }
 
@@ -35,6 +35,7 @@ func (treeNode *TreeNode) Init(minLat float64, maxLat float64, minLng float64, m
 	treeNode.MaxNumPlaces = maxNumPlaces
 }
 
+// RangeSearch
 // if current subtree is leaf, return all places in the subtree since there is no smaller area to explore
 // if current subtree has children and requested area is smaller than the area covered by subtree, recurse to child subtree
 // if current subtree has children and requested area is larger than or equals the area covered by subtree, depth-first-search
@@ -95,7 +96,6 @@ func (treeNode TreeNode) IsLeafNode() bool {
 	return treeNode.isLeaf
 }
 
-// assignPlaces is only to be used with the Split method
 func (treeNode *TreeNode) assignPlaces() {
 	for len(treeNode.Places) > 0 {
 		n := len(treeNode.Places)
@@ -114,22 +114,22 @@ func (treeNode *TreeNode) assignPlaces() {
 	}
 }
 
-func (treeNode *TreeNode) InsertPlace(p place.Place) {
+func (treeNode *TreeNode) InsertPlace(place place.Place) {
 	if treeNode.IsLeafNode() {
-		treeNode.Places = append(treeNode.Places, p)
+		treeNode.Places = append(treeNode.Places, place)
 		if uint(treeNode.Size()) > treeNode.MaxNumPlaces && treeNode.Depth < MaxTreeDepth {
 			treeNode.Split()
 		}
 	} else {
 		switch {
-		case treeNode.inNorthwest(p):
-			treeNode.Children[Northwest].InsertPlace(p)
-		case treeNode.inNortheast(p):
-			treeNode.Children[Northeast].InsertPlace(p)
-		case treeNode.inSouthwest(p):
-			treeNode.Children[Southwest].InsertPlace(p)
-		case treeNode.inSoutheast(p):
-			treeNode.Children[Southeast].InsertPlace(p)
+		case treeNode.inNorthwest(place):
+			treeNode.Children[Northwest].InsertPlace(place)
+		case treeNode.inNortheast(place):
+			treeNode.Children[Northeast].InsertPlace(place)
+		case treeNode.inSouthwest(place):
+			treeNode.Children[Southwest].InsertPlace(place)
+		case treeNode.inSoutheast(place):
+			treeNode.Children[Southeast].InsertPlace(place)
 		}
 	}
 }

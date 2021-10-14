@@ -28,7 +28,7 @@ func TestRangeSearch(t *testing.T) {
 		qTree.Insert(p)
 	}
 
-	radius := 10.0 // 10 km
+	radius := 10.0                 // 10 km
 	location := place.GeoLocation{ // northwest direction
 		Lat: 40,
 		Lng: -50,

@@ -6,7 +6,6 @@ const (
 	MaxTreeDepth = 6
 )
 
-// Quad-tree data structure
 type QuadTree struct {
 	root *TreeNode
 }

@@ -1,9 +1,5 @@
 package server
 
-// use Gin as router
-// post place endpoint
-// get range search endpoint
-
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -46,7 +42,7 @@ func (server *Server) AddPlace(c *gin.Context) {
 	}
 }
 
-// TODO: add parameter validation
+// TODO: add path parameter validations
 func (server *Server) SearchPlaces(c *gin.Context) {
 	lat, _ := strconv.ParseFloat(c.DefaultQuery("lat", "0.0"), 64)
 	lng, _ := strconv.ParseFloat(c.DefaultQuery("lng", "0.0"), 64)
@@ -65,16 +61,16 @@ func (server *Server) SearchPlaces(c *gin.Context) {
 	c.String(http.StatusOK, fmt.Sprintf("%v", res))
 }
 
-func (server Server) RunServer() {
+func (server Server) Run() {
 	server.Init()
 
 	router := gin.Default()
 
 	// group endpoints
-	v1 := router.Group("/v1")
+	v1 := router.Group("/api/v1")
 	{
-		v1.POST("addplace", server.AddPlace)
-		v1.GET("searchplaces", server.SearchPlaces)
+		v1.POST("/places/add", server.AddPlace)
+		v1.GET("/places/search", server.SearchPlaces)
 	}
 
 	// automatically looking for environment variable PORT
