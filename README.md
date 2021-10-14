@@ -18,14 +18,14 @@ When the tree reaches the maximum depth, there is no more `split`.
 We have not considered the solution to the case that many POIs are `clustered` around a few commercial or culture rich regions.
 It may make sense to set a higher `split` limit for those regions.
 
-## Rest API
-* Add place
-   * path: `/v1/addplace`
-   * A POST method for inserting POI into the database
+## RESTful APIs
+* Add a place
+   * path: `/api/v1/places/add`
+   * A POST method for inserting POIs
 
 * Search Places
-   * path: `/v1/searchplaces`
-   * A GET method for performing POI range search
+   * path: `/api/v1/places/search`
+   * A GET method for performing POI range searches
 
 ## In-memory Storage
 * Persistence is not implemented yet. Restart server flushes all the POI in the server.
