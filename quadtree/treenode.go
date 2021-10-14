@@ -7,11 +7,13 @@ import (
 	"math"
 )
 
+type Direction string
+
 const (
-	Northwest = "northwest"
-	Northeast = "northeast"
-	Southwest = "southwest"
-	Southeast = "southeast"
+	Northwest Direction = "northwest"
+	Northeast Direction = "northeast"
+	Southwest Direction = "southwest"
+	Southeast Direction = "southeast"
 )
 
 type TreeNode struct {
@@ -19,7 +21,7 @@ type TreeNode struct {
 	Area         *geohash.Box
 	Places       []place.Place // empty if not a leaf node
 	Parent       *TreeNode
-	Children     map[string]*TreeNode
+	Children     map[Direction]*TreeNode
 	Depth        uint8
 	isLeaf       bool
 	MaxNumPlaces uint
@@ -28,7 +30,7 @@ type TreeNode struct {
 func (treeNode *TreeNode) Init(minLat float64, maxLat float64, minLng float64, maxLng float64, depth uint8, parent *TreeNode, maxNumPlaces uint) {
 	treeNode.Area = &geohash.Box{MinLat: minLat, MinLng: minLng, MaxLat: maxLat, MaxLng: maxLng}
 	treeNode.Key = geohash.Encode(treeNode.Area.Center())
-	treeNode.Children = make(map[string]*TreeNode)
+	treeNode.Children = make(map[Direction]*TreeNode)
 	treeNode.Depth = depth
 	treeNode.Parent = parent
 	treeNode.isLeaf = true

@@ -58,7 +58,7 @@ func (server *Server) SearchPlaces(c *gin.Context) {
 	)
 
 	res := server.quadTree.RangeSearch(&geoLocation, radius)
-	c.String(http.StatusOK, fmt.Sprintf("%v", res))
+	c.String(http.StatusOK, fmt.Sprintf("%+v", res))
 }
 
 func (server Server) Run() {
