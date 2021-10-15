@@ -7,6 +7,7 @@ import (
 	"github.com/weihesdlegend/quadtree-server/quadtree"
 	"go.uber.org/zap"
 	"net/http"
+	"os"
 	"strconv"
 )
 
@@ -74,7 +75,11 @@ func (server Server) Run() {
 	}
 
 	// automatically looking for environment variable PORT
-	err := router.Run()
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = ":10086"
+	}
+	err := router.Run(port)
 	if err != nil {
 		server.logger.Fatal(err.Error())
 	}
