@@ -42,7 +42,7 @@ func (treeNode *TreeNode) Init(minLat float64, maxLat float64, minLng float64, m
 // if current subtree has children and requested area is smaller than the area covered by subtree, recurse to child subtree
 // if current subtree has children and requested area is larger than or equals the area covered by subtree, depth-first-search
 // to get all places in the subtrees
-func (treeNode TreeNode) RangeSearch(centralLocation *place.GeoLocation, radius float64) (places []place.Place) {
+func (treeNode *TreeNode) RangeSearch(centralLocation *place.GeoLocation, radius float64) (places []place.Place) {
 	if treeNode.isLeaf {
 		places = treeNode.Places
 	} else {
@@ -66,25 +66,25 @@ func (treeNode TreeNode) RangeSearch(centralLocation *place.GeoLocation, radius 
 	return
 }
 
-func isRoot(treeNode TreeNode) bool {
+func isRoot(treeNode *TreeNode) bool {
 	area := treeNode.Area
 	return area.MinLng == -180 && area.MaxLng == 180 && area.MinLat == -90 && area.MaxLat == 90
 }
 
 // area in square km
-func area(treeNode TreeNode) (subtreeArea float64) {
+func area(treeNode *TreeNode) (subtreeArea float64) {
 	if isRoot(treeNode) {
 		return 2.003018497261185e+08 * 4
 	}
 	return utils.Area(*treeNode.Area)
 }
 
-func dfs(treeNode TreeNode) (places []place.Place) {
+func dfs(treeNode *TreeNode) (places []place.Place) {
 	if treeNode.isLeaf {
 		places = treeNode.Places
 	} else {
 		for _, child := range treeNode.Children {
-			places = append(places, dfs(*child)...)
+			places = append(places, dfs(child)...)
 		}
 	}
 	return
@@ -94,7 +94,7 @@ func (treeNode *TreeNode) Size() int {
 	return len(treeNode.Places)
 }
 
-func (treeNode TreeNode) IsLeafNode() bool {
+func (treeNode *TreeNode) IsLeafNode() bool {
 	return treeNode.isLeaf
 }
 
@@ -165,22 +165,22 @@ func (treeNode *TreeNode) Split() {
 	treeNode.isLeaf = false
 }
 
-func (treeNode TreeNode) inNorthwest(place place.Place) bool {
+func (treeNode *TreeNode) inNorthwest(place place.Place) bool {
 	lat, lng := place.Location.Lat, place.Location.Lng
 	return treeNode.Children[Northwest].Area.Contains(lat, lng)
 }
 
-func (treeNode TreeNode) inNortheast(place place.Place) bool {
+func (treeNode *TreeNode) inNortheast(place place.Place) bool {
 	lat, lng := place.Location.Lat, place.Location.Lng
 	return treeNode.Children[Northeast].Area.Contains(lat, lng)
 }
 
-func (treeNode TreeNode) inSouthwest(place place.Place) bool {
+func (treeNode *TreeNode) inSouthwest(place place.Place) bool {
 	lat, lng := place.Location.Lat, place.Location.Lng
 	return treeNode.Children[Southwest].Area.Contains(lat, lng)
 }
 
-func (treeNode TreeNode) inSoutheast(place place.Place) bool {
+func (treeNode *TreeNode) inSoutheast(place place.Place) bool {
 	lat, lng := place.Location.Lat, place.Location.Lng
 	return treeNode.Children[Southeast].Area.Contains(lat, lng)
 }

@@ -23,6 +23,6 @@ func (quadTree *QuadTree) Insert(p place.Place) {
 	quadTree.root.InsertPlace(p)
 }
 
-func (quadTree QuadTree) RangeSearch(centralLocation *place.GeoLocation, radius float64) []place.Place {
+func (quadTree *QuadTree) RangeSearch(centralLocation *place.GeoLocation, radius float64) []place.Place {
 	return quadTree.Root().RangeSearch(centralLocation, radius)
 }
