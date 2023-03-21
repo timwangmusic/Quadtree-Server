@@ -6,6 +6,7 @@ import (
 	"github.com/weihesdlegend/quadtree-server/place"
 	"github.com/weihesdlegend/quadtree-server/quadtree"
 	"go.uber.org/zap"
+	"math"
 	"net/http"
 	"os"
 	"strconv"
@@ -43,15 +44,29 @@ func (server *Server) AddPlace(c *gin.Context) {
 	}
 }
 
-// TODO: add path parameter validations
 func (server *Server) SearchPlaces(c *gin.Context) {
-	lat, _ := strconv.ParseFloat(c.DefaultQuery("lat", "0.0"), 64)
-	lng, _ := strconv.ParseFloat(c.DefaultQuery("lng", "0.0"), 64)
+	lat, latParsingErr := strconv.ParseFloat(c.DefaultQuery("lat", "0.0"), 64)
+	if latParsingErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("cannot parse latitude: %s", c.Query("lat"))})
+	}
+	if math.Abs(lat) > 90.0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("latitude %s is out of range of -90.0 to 90.0", c.Query("lat"))})
+	}
+	lng, lngParsingErr := strconv.ParseFloat(c.DefaultQuery("lng", "0.0"), 64)
+	if lngParsingErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("cannot parse longitude: %s", c.Query("lng"))})
+	}
+	if math.Abs(lng) > 180 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("longitude %s is out of range of -180.0 to 180.0", c.Query("lng"))})
+	}
 	geoLocation := place.GeoLocation{
 		Lat: lat,
 		Lng: lng,
 	}
-	radius, _ := strconv.ParseFloat(c.DefaultQuery("radius", "200"), 64)
+	radius, radParsingErr := strconv.ParseFloat(c.DefaultQuery("radius", "200.0"), 64)
+	if radParsingErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("cannot parse radius: %s", c.Query("radius"))})
+	}
 	server.logger.Info("range search request",
 		zap.Float64("lat", lat),
 		zap.Float64("lng", lng),
@@ -62,7 +77,7 @@ func (server *Server) SearchPlaces(c *gin.Context) {
 	c.String(http.StatusOK, fmt.Sprintf("%+v", res))
 }
 
-func (server Server) Run() {
+func (server *Server) Run() {
 	server.Init()
 
 	router := gin.Default()
