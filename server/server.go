@@ -14,6 +14,7 @@ import (
 
 const (
 	MaxNumPlacesPerNode = 100
+	MaxTreeDepth        = 5
 )
 
 type Server struct {
@@ -23,7 +24,7 @@ type Server struct {
 
 func (server *Server) Init() {
 	server.quadTree = &quadtree.QuadTree{}
-	server.quadTree.Init(MaxNumPlacesPerNode)
+	server.quadTree.Init(MaxNumPlacesPerNode, MaxTreeDepth)
 	server.logger, _ = zap.NewProduction()
 }
 
