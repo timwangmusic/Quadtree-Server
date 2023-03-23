@@ -2,17 +2,13 @@ package quadtree
 
 import "github.com/weihesdlegend/quadtree-server/place"
 
-const (
-	MaxTreeDepth = 6
-)
-
 type QuadTree struct {
 	root *TreeNode
 }
 
-func (quadTree *QuadTree) Init(maxNumPlaces uint) {
+func (quadTree *QuadTree) Init(maxNumPlaces uint, maxTreeDepth uint) {
 	quadTree.root = &TreeNode{}
-	quadTree.root.Init(-90, 90, -180, 180, 0, nil, maxNumPlaces)
+	quadTree.root.Init(-90, 90, -180, 180, 0, nil, maxNumPlaces, maxTreeDepth)
 }
 
 func (quadTree *QuadTree) Root() *TreeNode {
