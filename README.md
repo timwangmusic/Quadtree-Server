@@ -29,3 +29,7 @@ It may make sense to set a higher `split` limit for those regions.
 
 ## In-memory Storage
 * Persistence is not implemented yet. Restart server flushes all the POI in the server.
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=timwangmusic/Quadtree-Server&type=Date)](https://star-history.com/#timwangmusic/Quadtree-Server&Date)
